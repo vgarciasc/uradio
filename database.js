@@ -309,5 +309,5 @@ let database = {
 	],
 	"start_time": 75780,
 	"should_loop": true,
-	"should_block_pauses": true
+	"should_block_pauses": false
 }

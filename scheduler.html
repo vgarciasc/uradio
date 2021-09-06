@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Poor Man's Radio</title>
+    <!-- <link href="/style.css" rel="stylesheet" type="text/css" media="all"> -->
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="scheduler.js"></script>
+    <script type="text/javascript" src="scheduler_player.js"></script>
+    <style>
+    	body {
+    		font-family: Segoe UI, Arial;
+            background: rgb(150, 150, 180);
+        }
+
+        .video-entry {
+          overflow: auto;
+          border: solid 1px grey;
+          padding: 0.5em;
+      }
+
+          h3 {
+            margin-top: 0;
+        }
+
+        .video-entry:nth-child(odd) {
+            background: rgb(240,240,240);
+        }
+
+        .video-entry:nth-child(even) {
+            background: rgb(255,255,255);
+        }
+
+        button {
+            border: none;
+            background: rgba(0, 0, 0, 0.1);
+            font-family: courier;
+        }
+
+        button:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        button:disabled {
+            background: rgba(0, 0, 0, 0.05);
+            color: rgba(0, 0, 0, 0.05);
+        }
+
+        .video-entry:hover {
+            background: rgb(255, 230, 230);
+            filter: brightness(0.95);
+        }
+</style>
+</head>
+<body>
+    <center><h1 style="font-family: Courier; color: white">yt-radio</h1></center>
+    <!-- <p>This is a poor man's radio, coming soon to a neocities near you. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p> -->
+    <div style="width: 100%; border: solid 1px grey; height: 90vh; overflow: auto;">
+    	<div style="width: 55%; border: solid 1px black; float: left; padding: 10px;  background: white;">
+            <h3>Schedule</h3>
+            <div style="overflow: auto;  background: white;">
+             <div style="width: 70%; float: left;">
+                <span>start time:</span> <input id="start-time-input" placeholder="13:00:00"> <button onClick="updateStartTime()">set</button>
+                <br>
+                <input id="video-input" placeholder="https://www.youtube.com/watch?v=[id]" style="width: 42.7%">
+                <button onclick="onClickAddVideo()">add</button>
+            </div>
+            <div style="width: 20%; float: left;">
+                <button onClick="clearDatabase()">✕ Clear schedule</button>
+                <br>
+                <button onClick="exportDatabase()">⇓ Export JS file</button>
+            </div>
+        </div>
+        <hr>
+        <div id="video-info-container" style="overflow-y: auto; max-height: 70vh;">
+    			<!-- <div class="video-entry">
+	    			<div style="width: 20%; float: left; vertical-align: middle;">
+	    				{xx:xx}
+	    			</div>
+    				<div style="width: 70%; float: left;">
+	    				<span>{Video title}</span>
+	    				<br>
+	    				<span>Duration: {duration}</span>
+	    			</div>
+	    			<div style="width: 10%; float: left;">
+	    				<button>/\</button>
+	    				<br>
+	    				<button>\/</button>
+	    			</div>
+             </div> -->
+         </div>
+     </div>
+     <div style="width: 480px; border: solid 1px black; float: left; padding: 1em;  background: white;">
+        <h3>Preview</h3>
+        <div style="width: 480; border: solid 1px black;">
+            <iframe id="pmradio-iframe-yt" width="480" height="270" src="https://www.youtube.com/embed/-SFcIUEvNOQ?autoplay=1&enablejsapi=1&controls=0" frameborder="0" controls=0 allow="autoplay"></iframe>
+        </div>
+        <hr>
+        <div>
+            <h3>Settings</h3>
+            &gt; should loop? <input type="checkbox" id="should_loop">
+            <br>
+            <div style="margin-left: 1em; color: grey">
+                <span style="font-size:0.8em">if selected, there will be no 'downtime' for the radio - it will always be playing the playlist on repeat.</span>
+            </div>
+            &gt; should block pauses? <input type="checkbox" id="should_block_pauses">
+            <br>
+            <div style="margin-left: 1em; color: grey">
+                <span style="font-size:0.8em">if selected, the user won't be able to pause videos - this is closer to the 'radio' experience but can be annoying to some users.</span>
+            </div>
+            <hr>
+            <h3>Importing</h3>
+            &gt; Import JS file: <input id="database-upload" type="file" onchange="importDatabase(event)" />
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,43 @@
+
+body {
+  font-family: Segoe UI, Arial;
+  background: rgb(150, 150, 180);
+}
+
+.video-entry {
+  overflow: auto;
+  border: solid 1px grey;
+  padding: 0.5em;
+}
+
+h3 {
+    margin-top: 0;
+}
+
+.video-entry:nth-child(odd) {
+    background: rgb(240,240,240);
+}
+
+.video-entry:nth-child(even) {
+    background: rgb(255,255,255);
+}
+
+button {
+    border: none;
+    background: rgba(0, 0, 0, 0.1);
+    font-family: courier;
+}
+
+button:hover {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+button:disabled {
+    background: rgba(0, 0, 0, 0.05);
+    color: rgba(0, 0, 0, 0.05);
+}
+
+.video-entry:hover {
+    background: rgb(255, 230, 230);
+    filter: brightness(0.95);
+}

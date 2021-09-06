@@ -7,7 +7,7 @@ var database = {
 
 
 $(document).ready(function() {
-	var stored = JSON.parse(localStorage.getItem('pmradio_db'));
+	var stored = JSON.parse(localStorage.getItem('uradio_db'));
 	if (stored) {
 		database = stored;
 		updateUiFromDatabase();
@@ -15,22 +15,31 @@ $(document).ready(function() {
 });
 
 function onClickAddVideo() {
-	//!TODO: parse multiple types of entry
-	var id = $("#video-input")[0].value.split("=")[1].split("&")[0];
+	var txt = $("#video-input")[0].value;
+	var videos = txt.split(/(watch\?v=)/g);
+	var condensed_videos = txt.split(/(youtu.be\/)/g);
+	var playlists = txt.split(/(\/playlist\?list=)/g);
 
-	$.get(
-		'https://www.googleapis.com/youtube/v3/videos', {
-			id: id,
-			part: 'snippet,contentDetails',
-			key: 'AIzaSyBz4uxWmkgJkipQ7yXZKInwjX0c1zxYkws'},
-		function(data) {
-			$.each( data.items, function(i, item) {
-				// !TODO: handle errors
-				console.log(item);
-				addVideoToDatabase(item);
-			})
-		}
-	);
+	var video_id = ((videos != null && videos.length > 1) ? videos[videos.length - 1] : (condensed_videos != null && condensed_videos.length > 1 ? condensed_videos[condensed_videos.length - 1] : null));
+	var playlist_id = (playlists ? playlists[playlists.length - 1] : null);
+
+	if (video_id) {
+		var id = txt.split("=")[1].split("&")[0];
+		$.get(
+			'https://www.googleapis.com/youtube/v3/videos', {
+				id: id,
+				part: 'snippet,contentDetails',
+			},
+			function(data) {
+				$.each( data.items, function(i, item) {
+					// !TODO: handle errors
+					addVideoToDatabase(item);
+				})
+			}
+		);
+	} else {
+
+	}
 }
 
 function addVideoToDatabase(video_result) {
@@ -63,7 +72,7 @@ function addVideoToHtml(video_obj, video_idx) {
 	text += "";
 	text += "<div class='video-entry' id='" + video_obj.id + "'>";
 	text += "<div style='width: 13%; float: left; vertical-align: middle;'>";
-	text += "{" + parseVideoTimeToString(video_obj.start_time) + "}";
+	text += "{" + parseVideoTimeToString(video_obj.start_time, true) + "}";
 	text += "</div>";
 	text += "<div style='width: 60%; float: left;'>";
 	text += "<span>" + video_obj.title + "</span>"
@@ -71,14 +80,14 @@ function addVideoToHtml(video_obj, video_idx) {
 	text += "<span>Duration: " + parseVideoTimeToString(video_obj.duration) + "</span>"
 	text += "</div>"
 	text += "<div style='width: 15%; float: left; margin-left: 0.5em;'>"
-	text += "<button onclick='playVideoById(\"" + video_obj.id + "\")'>play</button>"
+	text += "<button onclick='playVideoById(\"" + video_obj.id + "\")'>▶ play</button>"
 	text += "<br>"
-	text += "<button onclick='removeVideo(" + video_idx + ")'>remove</button>"
+	text += "<button onclick='removeVideo(" + video_idx + ")'>✕ remove</button>"
 	text += "</div>"
 	text += "<div style='width: 5%; float: left;'>" 
-	text += "<button onclick='moveVideo(" + video_idx + ", -1)' " + (video_idx == 0 ? "disabled" : "") + ">/\\</button>"
+	text += "<b><button onclick='moveVideo(" + video_idx + ", -1)' " + (video_idx == 0 ? "disabled" : "") + ">↑ </button></b>"
 	text += "<br>"
-	text += "<button onclick='moveVideo(" + video_idx + ", +1)' " + (video_idx == database.videos.length - 1 ? "disabled" : "") + ">\\/</button>"
+	text += "<b><button onclick='moveVideo(" + video_idx + ", +1)' " + (video_idx == database.videos.length - 1 ? "disabled" : "") + ">↓</button></b>"
 	text += "</div>"
 	text += "</div>"
 
@@ -124,11 +133,12 @@ function extractDurationFromResult(video_obj) {
 	return parseInt(string.split("M")[0].slice(2)) * 60 + parseInt(string.split("M")[1].slice(0, 2));
 }
 
-function parseVideoTimeToString(time) {
-	if (time < 60*60) {
+function parseVideoTimeToString(time, hour=false) {
+	time = time % (24*60*60);
+	if (!hour) {
 		return Math.floor(time / 60) + ":" + (time % 60).toString().padStart(2, '0');
 	} else {
-		return Math.floor(time / 3600)
+		return Math.floor(time / 3600).toString().padStart(2, '0') 
 			+ ":"
 			+ Math.floor((time % 3600) / 60).toString().padStart(2, '0') 
 			+ ":" 
@@ -137,7 +147,7 @@ function parseVideoTimeToString(time) {
 }
 
 function saveToStorage() {
-	localStorage.setItem('pmradio_db', JSON.stringify(database));
+	localStorage.setItem('uradio_db', JSON.stringify(database));
 }
 
 function download(filename, text) {
@@ -155,4 +165,28 @@ function exportDatabase() {
 	database.should_loop = $("#should_loop").is(":checked");
 	database.should_block_pauses = $("#should_block_pauses").is(":checked");
 	download("database.js", "let database = " + JSON.stringify(database, null, '\t'))	
+}
+
+function clearDatabase() {
+	database = {
+		videos: [],
+		start_time: 13*60*60 + 22*60 + 15,
+		should_loop: false,
+		should_block_pauses: false
+	};
+	saveToStorage();
+	updateUiFromDatabase();	
+}
+
+function importDatabase(event) {
+	var file = document.getElementById("database-upload").files[0];
+	if (file) {
+	    var reader = new FileReader();
+	    reader.readAsText(file, "UTF-8");
+	    reader.onload = function (evt) {
+		    database = JSON.parse(evt.target.result.slice(15));
+			saveToStorage();
+			updateUiFromDatabase();	
+	    }
+	}
 }

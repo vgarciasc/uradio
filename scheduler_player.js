@@ -7,7 +7,7 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 var player;
 
 function onYouTubeIframeAPIReady() {
-  player = new YT.Player("pmradio-iframe-yt", {
+  player = new YT.Player("uradio-iframe-yt", {
     playerVars: { 'autoplay': 1, 'controls': 0 },
     events: {
       'onReady': onPlayerReady,
@@ -17,7 +17,7 @@ function onYouTubeIframeAPIReady() {
 }
 
 function onPlayerReady() {
-	$("#pmradio-iframe-yt").hide();
+	$("#uradio-iframe-yt").hide();
 }
 
 function onPlayerStateChange(event) {
@@ -25,6 +25,6 @@ function onPlayerStateChange(event) {
 }
 
 function playVideoById(video_id) {
-	$("#pmradio-iframe-yt").show();
+	$("#uradio-iframe-yt").show();
 	player.loadVideoById(video_id);
 }

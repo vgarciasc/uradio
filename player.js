@@ -7,7 +7,7 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 var player;
 
 function onYouTubeIframeAPIReady() {
-  player = new YT.Player("pmradio-iframe-yt", {
+  player = new YT.Player("uradio-iframe-yt", {
     playerVars: { 'autoplay': 1, 'controls': 0 },
     events: {
       'onReady': onPlayerReady,
@@ -143,14 +143,14 @@ function updateDom() {
   updateDomText();
 
   if (off_air) {
-    if ($("#pmradio-off-air").length > 0) {
-      $("#pmradio-iframe-yt").hide();
-      $("#pmradio-off-air").show();
+    if ($("#uradio-off-air").length > 0) {
+      $("#uradio-iframe-yt").hide();
+      $("#uradio-off-air").show();
     }
   } else {
-    if ($("#pmradio-off-air").length > 0) {
-      $("#pmradio-iframe-yt").show();
-      $("#pmradio-off-air").hide();
+    if ($("#uradio-off-air").length > 0) {
+      $("#uradio-iframe-yt").show();
+      $("#uradio-off-air").hide();
     }
   }
 }
@@ -163,5 +163,5 @@ function updateDomText() {
     str = curr_video_obj.title
   }
   
-  $("#pmradio-current-video").text(str);
+  $("#uradio-current-video").text(str);
 }
